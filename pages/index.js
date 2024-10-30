@@ -75,12 +75,48 @@ function Dashboard() {
 
   const { data: usersPerTimeframe } = useUsersPerTimeframe({
     refetchOnWindowFocus: false,
-    initialData: {},
+    initialData: {
+      totalUsers: 1500,
+      todayUsers: 25,
+      weeklyUsers: 100,
+      monthlyUsers: 400,
+      monthlyFTDs: 50,
+    },
   });
 
   const dailyTransactions = useDailyTransactionsForThisMonth({
     refetchOnWindowFocus: false,
-    initialData: {},
+    initialData: {
+      total_deposits_amount: "45000.00",
+      total_withdrawals_amount: "27000.00",
+      deposits_performance_increase: 15.5,
+      withdrawals_performance_increase: -5,
+      daily_transactions_month_format: {
+        labels: [
+          "2024-10-01",
+          "2024-10-02",
+          "2024-10-03",
+          "2024-10-04",
+          "2024-10-31",
+        ],
+        deposits: [12, 15, 10, 8, 14],
+        withdrawals: [8, 9, 5, 7, 9],
+        deposit_amounts: [
+          "1800.00",
+          "2250.00",
+          "1500.00",
+          "1200.00",
+          "2100.00",
+        ],
+        withdrawal_amounts: [
+          "1200.00",
+          "1350.00",
+          "750.00",
+          "1050.00",
+          "1350.00",
+        ],
+      },
+    },
   });
 
   const col = {
@@ -102,7 +138,6 @@ function Dashboard() {
   const sortedUsersPerCountry = useMemo(() => {
     return Object.entries(usersPerCountry).sort((a, b) => b[1] - a[1]);
   }, [usersPerCountry]);
-  const [v, setV] = useState(0);
 
   return (
     <>

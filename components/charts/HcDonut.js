@@ -24,8 +24,6 @@ const MiniTitle = styled.p`
 const HcDonut = ({ userCountryData, chartTitle }) => {
   const [countryData, setCountryData] = useState(userCountryData);
 
-  console.log(userCountryData);
-
   useEffect(() => {
     setCountryData(userCountryData);
   }, [userCountryData]);
