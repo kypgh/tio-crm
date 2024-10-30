@@ -25,13 +25,13 @@ export const BrandProvider = ({ children }) => {
     if (brand === selectedBrand) return;
     setIsLoading(true);
     setCookie("crmBrand", brand);
-    refetch()
-      .then((res) => {
-        setSelectedBrand(res.data.user.selectedBrand);
-        setIsLoading(false);
-        router.push("/");
-      })
-      .finally(() => setIsLoading(false));
+    // refetch()
+    //   .then((res) => {
+    //     setSelectedBrand(res.data.user.selectedBrand);
+    //     setIsLoading(false);
+    //     router.push("/");
+    //   })
+    //   .finally(() => setIsLoading(false));
   }
 
   // Get brand from cookie on load

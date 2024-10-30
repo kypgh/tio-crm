@@ -11,15 +11,15 @@ export const usePermissions = (permissionList, matchAllPermissions = false) => {
   const { data } = useUser();
   if (!data) return { permissions: [], isAllowed: false, isAdmin: false };
 
-  if (data.user?.role?.name === "admin")
-    return { permissions: userPerms, isAllowed: true, isAdmin: true };
-
   const userPerms = [
     ...new Set([
       ...(data.user?.permissions || []),
       ...(data.user?.role?.permissions || []),
     ]),
   ];
+  if (data.user?.role?.name === "admin")
+    return { permissions: userPerms, isAllowed: true, isAdmin: true };
+
   let isAllowed = false;
 
   if (matchAllPermissions) {

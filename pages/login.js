@@ -167,45 +167,7 @@ const CopyrightLine = styled.div`
 
 function Login({ requestedPage = "/" }) {
   const { theme, setDark, setLight } = useTheme();
-  const loginValidationSchema = Yup.object().shape({
-    email: Yup.string().required().label("Email"),
-    password: Yup.string().required().label("Password"),
-  });
-
-  const [selectedBrand, setBrand] = useSelectedBrand();
-
-  const queryClient = useQueryClient();
-
-  const [loginErrorMsg, setLoginErrorMsg] = useState(false);
-  const [hasToken, setHasToken] = useState(true);
-
   const router = useRouter();
-
-  useEffect(() => {
-    let rToken = getCookie("refresh_token");
-    if (rToken) {
-      agent()
-        .refreshAccessToken(rToken)
-        .then((res) => {
-          let query = { ...router.query };
-          delete query.redirect;
-          queryClient.invalidateQueries(["currentUser"]);
-          return router.push({
-            pathname: requestedPage,
-            query,
-          });
-        })
-        .catch((err) => {
-          setJWTToken("");
-          setCookie("refresh_token", "", { sameSite: "lax" });
-          setHasToken(false);
-          console.error(err);
-          queryClient.invalidateQueries(["currentUser"]);
-        });
-    } else {
-      setHasToken(false);
-    }
-  }, []);
 
   return (
     <Outer>
@@ -216,87 +178,40 @@ function Login({ requestedPage = "/" }) {
         secondaryColor={theme.logoSecondary}
       />
       <Box>
-        <Formik
-          initialValues={{
-            email: "",
-            password: "",
-          }}
-          validateOnChange={false}
-          validationSchema={loginValidationSchema}
-          onSubmit={async (values, { setSubmitting }) => {
-            return agent()
-              .loginCrmUser(values.email, values.password)
-              .then((res) => {
-                const { user = {} } = res;
-                let query = { ...router.query };
-                delete query.redirect;
-                setBrand(user.brands[0]);
-
+        <form onSubmit={(ev) => ev.preventDefault()}>
+          <Title>Login</Title>
+          <Label>Email:</Label>
+          <InputField
+            type="email"
+            name="email"
+            autoComplete="username"
+            onChange={(e) => {
+              setFieldValue("email", e.target.value);
+              setLoginErrorMsg(false);
+            }}
+          />
+          <Label>Password:</Label>
+          <InputField
+            type="password"
+            name="password"
+            autoComplete="current-password"
+            onChange={(e) => {
+              setFieldValue("password", e.target.value);
+              setLoginErrorMsg(false);
+            }}
+          />
+          <ButtonContainer>
+            <Button
+              onClick={() => {
                 return router.push({
-                  pathname: requestedPage,
-                  query,
+                  pathname: requestedPage || "/",
                 });
-              })
-              .catch(() => {
-                setLoginErrorMsg(true);
-              })
-              .finally(() => {
-                setSubmitting(false);
-              });
-          }}
-        >
-          {({ handleSubmit, isSubmitting, errors, setFieldValue }) => (
-            <>
-              {(isSubmitting || hasToken) && (
-                <LoadingBox>
-                  <Lottie
-                    animationData={loadingAnimation}
-                    mBottom="0"
-                    autoPlay={true}
-                    loop={true}
-                    width={100}
-                    height={100}
-                  />
-                </LoadingBox>
-              )}
-              <form onSubmit={(ev) => ev.preventDefault()}>
-                <Title>Login</Title>
-                <Label>Email:</Label>
-                <InputField
-                  type="email"
-                  name="email"
-                  autoComplete="username"
-                  onChange={(e) => {
-                    setFieldValue("email", e.target.value);
-                    setLoginErrorMsg(false);
-                  }}
-                />
-                <ErrorMessage>{errors.email}</ErrorMessage>
-                <Label>Password:</Label>
-                <InputField
-                  type="password"
-                  name="password"
-                  autoComplete="current-password"
-                  onChange={(e) => {
-                    setFieldValue("password", e.target.value);
-                    setLoginErrorMsg(false);
-                  }}
-                />
-                <ErrorMessage>{errors.password}</ErrorMessage>
-                <ButtonContainer>
-                  <Button onClick={handleSubmit} disabled={isSubmitting}>
-                    Login
-                  </Button>
-                </ButtonContainer>
-                {loginErrorMsg && (
-                  <ErrorMessage style={{ alignSelf: "center" }}>
-                    Wrong Credentials
-                  </ErrorMessage>
-                )}
-              </form>
-            </>
-          )}
-        </Formik>
+              }}
+            >
+              Login
+            </Button>
+          </ButtonContainer>
+        </form>
       </Box>
       <ThemeContainer>
         {theme.name !== "light" ? (

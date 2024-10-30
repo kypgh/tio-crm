@@ -56,12 +56,21 @@ function Dashboard() {
 
   const { data: usersPerDevice } = useUsersPerDevice({
     refetchOnWindowFocus: false,
-    initialData: {},
+    initialData: {
+      android: 3,
+      ios: 4,
+      windows: 3,
+    },
   });
 
   const { data: usersPerCountry } = useUsersPerCountry({
     refetchOnWindowFocus: false,
-    initialData: {},
+    initialData: {
+      US: 5,
+      CA: 3,
+      UK: 2,
+      AU: 4,
+    },
   });
 
   const { data: usersPerTimeframe } = useUsersPerTimeframe({

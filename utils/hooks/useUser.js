@@ -4,37 +4,35 @@ import {
   UseQueryResult,
 } from "@tanstack/react-query";
 import agent from "../agent";
+import { PERMISSIONS } from "../../config/permissions";
+
+function getPermissionValues() {
+  return Object.values(PERMISSIONS).flatMap((permGroup) =>
+    Object.values(permGroup).map(({ value }) => value)
+  );
+}
 
 /**
  * @param {UseQueryOptions} options - The options for the query.
  * @returns {UseQueryResult} The result of the query.
  */
 const useUser = (options = {}) => {
-  return useQuery(
-    ["currentUser"],
-    async () => {
-      await agent().refreshAccessToken();
-      return agent()
-        .getCurrentCrmUser()
-        .then((res) => res.data)
-        .catch((err) => ({}));
-    },
-    {
-      refetchOnMount: true,
-      staleTime: 1000 * 60 * 1,
-      retry: (failureCount, error) => {
-        if (
-          error?.response?.status === 401 ||
-          error?.response?.status === 403 ||
-          error?.response?.status === 400
-        ) {
-          return false;
-        }
-        return failureCount < 3;
+  return {
+    data: {
+      user: {
+        email: "userEmail@gmail.com",
+        password: "userPassword",
+        first_name: "userFirstName",
+        last_name: "userLastName",
+        brands: ["Brand1", "Brand2"],
+        role: {
+          name: "admin",
+        },
+        permissions: getPermissionValues(),
       },
-      ...options,
-    }
-  );
+    },
+    ...options,
+  };
 };
 
 export default useUser;

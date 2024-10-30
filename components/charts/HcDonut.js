@@ -24,6 +24,8 @@ const MiniTitle = styled.p`
 const HcDonut = ({ userCountryData, chartTitle }) => {
   const [countryData, setCountryData] = useState(userCountryData);
 
+  console.log(userCountryData);
+
   useEffect(() => {
     setCountryData(userCountryData);
   }, [userCountryData]);
@@ -31,11 +33,11 @@ const HcDonut = ({ userCountryData, chartTitle }) => {
   const dataObjectArray = countryData.map((countryUsers) => ({
     continent: countryDataCodes.find(
       (country) => countryUsers[0] === country.iso2.toUpperCase()
-    ).continent,
+    )?.continent,
     users: countryUsers[1],
     country: countryDataCodes.find(
       (country) => countryUsers[0] === country.iso2.toUpperCase()
-    ).name,
+    )?.name,
   }));
 
   let continents = Array.from(new Set(dataObjectArray.map((b) => b.continent)));
@@ -47,20 +49,19 @@ const HcDonut = ({ userCountryData, chartTitle }) => {
 
   const dataSet = continents.map((continent, index) => ({
     y: usersPerContinent[continent],
-    color: Highcharts.getOptions().colors[index + 1],
+    // color: Highcharts.getOptions().colors[index + 1],
     drilldown: {
       name: continent,
       categories: dataObjectArray
         .filter((e) => e.continent === continent)
-        .map((e) => e.country.replace(/\(.*\)/g, "")),
+        .map((e) => e.country?.replace(/\(.*\)/g, "")),
       data: dataObjectArray
         .filter((e) => e.continent === continent)
         .map((e) => e.users),
     },
   }));
 
-  const colors = Highcharts.getOptions().colors,
-    categories = continents,
+  const categories = continents,
     data = dataSet,
     continentData = [],
     countrysData = [],
@@ -85,15 +86,13 @@ const HcDonut = ({ userCountryData, chartTitle }) => {
       countrysData.push({
         name,
         y: data[i].drilldown.data[j],
-        color: Highcharts.color(data[i].color).brighten(brightness).get(),
+        // color: Highcharts.color(data[i].color).brighten(brightness).get(),
         custom: {
-          country: name.split(" ")[1] || name.split(" ")[0],
+          country: name?.split(" ")[1] || name?.split(" ")[0],
         },
       });
     }
   }
-
-  const theme = useTheme();
 
   const options = {
     chart: {
